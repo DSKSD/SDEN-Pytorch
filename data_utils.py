@@ -68,16 +68,15 @@ def pad_to_batch(batch, w_to_ix,s_to_ix): # for bAbI dataset
     
     return historys, currents, slots, intents
 
-def pad_to_fact(fact, x_to_ix): # this is for inference
+def pad_to_history(history, x_to_ix): # this is for inference
     
-    max_x = max([s.size(1) for s in fact])
+    max_x = max([s.size(1) for s in history])
     x_p = []
-    for i in range(len(fact)):
-        if fact[i].size(1) < max_x:
-            x_p.append(torch.cat([fact[i], Variable(torch.LongTensor([x_to_ix['<pad>']] * (max_x - fact[i].size(1)))).view(1, -1)], 1))
+    for i in range(len(history)):
+        if history[i].size(1) < max_x:
+            x_p.append(torch.cat([history[i], Variable(torch.LongTensor([x_to_ix['<pad>']] * (max_x - history[i].size(1)))).view(1, -1)], 1))
         else:
-            x_p.append(fact[i])
+            x_p.append(history[i])
         
-    fact = torch.cat(x_p)
-    fact_mask = torch.cat([Variable(torch.ByteTensor(tuple(map(lambda s: s ==0, t.data)))) for t in fact]).view(fact.size(0), -1)
-    return fact, fact_mask
+    history = torch.cat(x_p)
+    return [history]
