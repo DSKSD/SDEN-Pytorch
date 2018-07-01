@@ -13,7 +13,7 @@ flatten = lambda l: [item for sublist in l for item in sublist]
 
 def prepare_sequence(seq, to_index):
     idxs = list(map(lambda w: to_index[w] if to_index.get(w) is not None else to_index["<unk>"], seq))
-    return Variable(torch.LongTensor(idxs))
+    return torch.LongTensor(idxs)
 
 def data_loader(train_data,batch_size,shuffle=False):
     if shuffle: random.shuffle(train_data)
@@ -42,12 +42,12 @@ def pad_to_batch(batch, w_to_ix,s_to_ix): # for bAbI dataset
         history_p_t = []
         for j in range(len(history[i])):
             if history[i][j].size(1) < max_len:
-                history_p_t.append(torch.cat([history[i][j], Variable(torch.LongTensor([w_to_ix['<pad>']] * (max_len - history[i][j].size(1)))).view(1, -1)], 1))
+                history_p_t.append(torch.cat([history[i][j], torch.LongTensor([w_to_ix['<pad>']] * (max_len - history[i][j].size(1))).view(1, -1)], 1))
             else:
                 history_p_t.append(history[i][j])
 
         while len(history_p_t) < max_history:
-            history_p_t.append(Variable(torch.LongTensor([w_to_ix['<pad>']] * max_len)).view(1, -1))
+            history_p_t.append(torch.LongTensor([w_to_ix['<pad>']] * max_len).view(1, -1))
 
         history_p_t = torch.cat(history_p_t)
         historys.append(history_p_t)
@@ -58,7 +58,7 @@ def pad_to_batch(batch, w_to_ix,s_to_ix): # for bAbI dataset
             currents.append(current[i])
 
         if slot[i].size(1) < max_slot:
-            slots.append(torch.cat([slot[i], Variable(torch.LongTensor([s_to_ix['<pad>']] * (max_slot - slot[i].size(1)))).view(1, -1)], 1))
+            slots.append(torch.cat([slot[i], torch.LongTensor([s_to_ix['<pad>']] * (max_slot - slot[i].size(1))).view(1, -1)], 1))
         else:
             slots.append(slot[i])
 
@@ -74,7 +74,7 @@ def pad_to_history(history, x_to_ix): # this is for inference
     x_p = []
     for i in range(len(history)):
         if history[i].size(1) < max_x:
-            x_p.append(torch.cat([history[i], Variable(torch.LongTensor([x_to_ix['<pad>']] * (max_x - history[i].size(1)))).view(1, -1)], 1))
+            x_p.append(torch.cat([history[i],torch.LongTensor([x_to_ix['<pad>']] * (max_x - history[i].size(1))).view(1, -1)], 1))
         else:
             x_p.append(history[i])
         
