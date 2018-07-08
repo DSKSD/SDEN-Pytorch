@@ -29,7 +29,6 @@ class SDEN(nn.Module):
             embeds = self.dropout(embeds)
             outputs, hidden = self.bigru_m(embeds)
             real_hidden = []
-
             for i, o in enumerate(outputs): # B,T,D
                 real_length = mask[i].data.tolist().count(0) 
                 real_hidden.append(o[real_length - 1])
