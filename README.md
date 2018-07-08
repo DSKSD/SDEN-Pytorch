@@ -3,8 +3,7 @@
 Pytorch implementation of [Sequential Dialogue Context Modeling for Spoken Language
 Understanding](https://arxiv.org/pdf/1705.03455.pdf)
 
-![Model](images/encoder.png "Encoder")
-![Model](images/decoder.png "Decoder")
+![Model](images/model.png "SDEN")
 
 
 ## Requirements
