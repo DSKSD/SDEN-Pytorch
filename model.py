@@ -1,8 +1,6 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-import torch.optim as optim
-from torch.autograd import Variable
 
 class SDEN(nn.Module):
     def __init__(self,vocab_size,embed_size,hidden_size,slot_size,intent_size):
@@ -21,16 +19,6 @@ class SDEN(nn.Module):
         self.intent_linear = nn.Linear(hidden_size*4,intent_size)
         self.slot_linear = nn.Linear(hidden_size*4,slot_size)
         self.dropout = nn.Dropout(0.5)
-        self.use_cuda = False
-        
-    def cuda(self, device=None):
-        if torch.cuda.is_available():
-            self.use_cuda = True
-        return self._apply(lambda t: t.cuda(device))
-
-    def cpu(self):
-        self.use_cuda = False
-        return self._apply(lambda t: t.cpu())
     
     def forward(self,history,current):
         batch_size = len(history)
@@ -73,8 +61,8 @@ class SDEN(nn.Module):
         G = self.context_encoder(CONCAT)
         
         _,H = self.session_encoder(G) # 2,B,2H
-        cell_state = torch.zeros_like(H)
-        if self.use_cuda: cell_state = cell_state.cuda()
+        weight = next(self.parameters())
+        cell_state = weight.new_zeros(H.size())
         O_1,_ = self.decoder_1(embeds)
         O_1 = self.dropout(O_1)
         
