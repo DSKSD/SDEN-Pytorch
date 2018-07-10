@@ -23,6 +23,12 @@ class SDEN(nn.Module):
         self.slot_linear = nn.Linear(hidden_size*4,slot_size)
         self.dropout = nn.Dropout(dropout)
 
+        for param in self.parameters():
+            if len(param.size())>1:
+                nn.init.xavier_uniform_(param)
+            else:
+                param.data.zero_()
+        
     def forward(self,history,current):
         batch_size = len(history)
         H= [] # encoded history

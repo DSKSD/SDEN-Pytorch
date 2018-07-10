@@ -126,13 +126,14 @@ def pad_to_batch(batch, w_to_ix,s_to_ix): # for bAbI dataset
 
 def pad_to_history(history, x_to_ix): # this is for inference
     
-    max_x = max([s.size(1) for s in history])
+    max_x = max([len(s) for s in history])
     x_p = []
     for i in range(len(history)):
-        if history[i].size(1) < max_x:
-            x_p.append(torch.cat([history[i],torch.LongTensor([x_to_ix['<pad>']] * (max_x - history[i].size(1))).view(1, -1)], 1))
+        h = prepare_sequence(history[i],x_to_ix).unsqueeze(0)
+        if len(history[i]) < max_x:
+            x_p.append(torch.cat([h,torch.LongTensor([x_to_ix['<pad>']] * (max_x - h.size(1))).view(1, -1)], 1))
         else:
-            x_p.append(history[i])
+            x_p.append(h)
         
     history = torch.cat(x_p)
     return [history]

@@ -11,13 +11,47 @@ Understanding](https://arxiv.org/pdf/1705.03455.pdf)
 ```
 pytorch==0.4
 nltk==3.5.1
+sklearn_crfsuite
+```
+
+## Run
+
+```
+python3 main.py
 ```
 
 ## Data
 
-I have modified [Stanford Multi-turn dataset](https://nlp.stanford.edu/blog/a-new-multi-turn-multi-domain-task-oriented-dialogue-dataset/) to fit this model. So it has some noise. 
+I have modified [Stanford Multi-turn dataset](https://nlp.stanford.edu/blog/a-new-multi-turn-multi-domain-task-oriented-dialogue-dataset/) to fit this model. So it has some noise especially slot tags.
+It consists of three domain, `Weather`, `Schedule`, `Navigate`. I did dialogue recombination for multi-domain dialogue and modified its format to BIO.
 
 ### sample
+
+#### Single domain dialogue
+
+```
+User :  Will it be hot in Inglewood over the next few days?
+BOT :  It will be warm both Monday and Tuesday in Inglewood.
+User :  Thank you very much.
+BOT :  You're welcome. Hope you have a great day.
+```
+
+#### Multi domain dialogue
+
+```
+User :  is it going to be raining this weekend
+BOT :  What city are you inquiring about?
+User :  Alhambra please.
+BOT :  It will be raining on Saturday and hailing on Sunday in Alhambra.
+User :  Thanks.
+BOT :  happy to help
+User :  I need a gas station
+BOT :  I have one gas station listed. Want more info?
+User :  What is the address?
+BOT :  76 is at 91 El Camino Real.
+User :  Thank you!
+BOT :  You're welcome, stay safe.
+```
 
 
 ## Devset Result
