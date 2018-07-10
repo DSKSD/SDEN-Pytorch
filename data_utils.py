@@ -1,15 +1,71 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-import torch.optim as optim
-from torch.autograd import Variable
 import numpy as np
-from konlpy.tag import Mecab
 from copy import deepcopy
 import random
-tagger = Mecab()
+from tqdm import tqdm
 flatten = lambda l: [item for sublist in l for item in sublist]
 
+
+def prepare_dataset(path,built_vocab=None,user_only=False):
+    data = open(path,"r",encoding="utf-8").readlines()
+    p_data=[]
+    history=[["<null>"]]
+    for d in data:
+        if d=="\n":
+            history=[["<null>"]]
+            continue
+        dd = d.replace("\n","").split("|||")
+        if len(dd)==1:
+            if user_only:
+                pass
+            else:
+                bot = dd[0].split()
+                history.append(bot)
+        else:
+            user = dd[0].split()
+            tag = dd[1].split()
+            intent = dd[2]
+            temp = deepcopy(history)
+            p_data.append([temp,user,tag,intent])
+            history.append(user)
+    
+    if built_vocab is None:
+        historys, currents, slots, intents = list(zip(*p_data))
+        vocab = list(set(flatten(currents)))
+        slot_vocab = list(set(flatten(slots)))
+        intent_vocab = list(set(intents))
+        
+        word2index={"<pad>" : 0, "<unk>" : 1, "<null>" : 2, "<s>" : 3, "</s>" : 4}
+        for vo in vocab:
+            if word2index.get(vo)==None:
+                word2index[vo] = len(word2index)
+
+        slot2index={"<pad>" : 0}
+        for vo in slot_vocab:
+            if slot2index.get(vo)==None:
+                slot2index[vo] = len(slot2index)
+
+        intent2index={}
+        for vo in intent_vocab:
+            if intent2index.get(vo)==None:
+                intent2index[vo] = len(intent2index)
+    else:
+        word2index, slot2index, intent2index = built_vocab
+        
+    for t in tqdm(p_data):
+        for i,history in enumerate(t[0]):
+            t[0][i] = prepare_sequence(history, word2index).view(1, -1)
+
+        t[1] = prepare_sequence(t[1], word2index).view(1, -1)
+        t[2] = prepare_sequence(t[2], slot2index).view(1, -1)
+        t[3] = torch.LongTensor([intent2index[t[3]]]).view(1,-1)
+            
+    if built_vocab is None:
+        return p_data, word2index, slot2index, intent2index
+    else:
+        return p_data
 
 def prepare_sequence(seq, to_index):
     idxs = list(map(lambda w: to_index[w] if to_index.get(w) is not None else to_index["<unk>"], seq))
@@ -53,7 +109,7 @@ def pad_to_batch(batch, w_to_ix,s_to_ix): # for bAbI dataset
         historys.append(history_p_t)
 
         if current[i].size(1) < max_current:
-            currents.append(torch.cat([current[i], Variable(torch.LongTensor([w_to_ix['<pad>']] * (max_current - current[i].size(1)))).view(1, -1)], 1))
+            currents.append(torch.cat([current[i], torch.LongTensor([w_to_ix['<pad>']] * (max_current - current[i].size(1))).view(1, -1)], 1))
         else:
             currents.append(current[i])
 
