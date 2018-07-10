@@ -22,7 +22,7 @@ python3 main.py
 
 ## Data
 
-I have modified [Stanford Multi-turn dataset](https://nlp.stanford.edu/blog/a-new-multi-turn-multi-domain-task-oriented-dialogue-dataset/) to fit this model. So it has some noise especially slot tags.
+I have modified [Stanford Multi-turn dataset](https://nlp.stanford.edu/blog/a-new-multi-turn-multi-domain-task-oriented-dialogue-dataset/) to fit this model. *So it has some noise especially slot tags.*
 It consists of three domain, `Weather`, `Schedule`, `Navigate`. I did dialogue recombination for multi-domain dialogue and modified its format to BIO.
 
 ### sample
@@ -31,26 +31,26 @@ It consists of three domain, `Weather`, `Schedule`, `Navigate`. I did dialogue r
 
 ```
 User :  Will it be hot in Inglewood over the next few days?
-BOT :  It will be warm both Monday and Tuesday in Inglewood.
+BOT  :  It will be warm both Monday and Tuesday in Inglewood.
 User :  Thank you very much.
-BOT :  You're welcome. Hope you have a great day.
+BOT  :  You're welcome. Hope you have a great day.
 ```
 
 #### Multi domain dialogue
 
 ```
 User :  is it going to be raining this weekend
-BOT :  What city are you inquiring about?
+BOT  :  What city are you inquiring about?
 User :  Alhambra please.
-BOT :  It will be raining on Saturday and hailing on Sunday in Alhambra.
+BOT  :  It will be raining on Saturday and hailing on Sunday in Alhambra.
 User :  Thanks.
-BOT :  happy to help
+BOT  :  happy to help
 User :  I need a gas station
-BOT :  I have one gas station listed. Want more info?
+BOT  :  I have one gas station listed. Want more info?
 User :  What is the address?
-BOT :  76 is at 91 El Camino Real.
+BOT  :  76 is at 91 El Camino Real.
 User :  Thank you!
-BOT :  You're welcome, stay safe.
+BOT  :  You're welcome, stay safe.
 ```
 
 
